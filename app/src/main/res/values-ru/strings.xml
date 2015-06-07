@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Тестировщик методов шифрования</string>
+    <string name="begin_test">Начать тест</string>
+    <string name="show_results">Посмотреть результаты</string>
+    <string name="test_started">Тест начался. Пожалуйста подождите…</string>
+    <string name="action_settings">Настройки</string>
+    <string name="done">Готово</string>
+    <string name="error">Упс, Ошибка</string>
+</resources>

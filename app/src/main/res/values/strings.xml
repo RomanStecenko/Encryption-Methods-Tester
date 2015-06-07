@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Encryption Methods Tester</string>
+    <string name="action_settings">Settings</string>
+    <string name="begin_test">Begin the test</string>
+    <string name="test_started">Test is started. Please wait…</string>
+    <string name="show_results">Show results</string>
+    <string name="done">Done</string>
+    <string name="error">Oops, Error</string>
+</resources>

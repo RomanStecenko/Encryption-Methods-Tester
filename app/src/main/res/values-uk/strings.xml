@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Тестувальник методів шифрування</string>
+    <string name="begin_test">Почати тест</string>
+    <string name="show_results">Подивитись результати</string>
+    <string name="test_started">Тест почався. Будь ласка зачекайте…</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="done">Готово</string>
+    <string name="error">Ой, Помилка</string>
+</resources>
