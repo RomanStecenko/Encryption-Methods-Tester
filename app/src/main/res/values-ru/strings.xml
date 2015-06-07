@@ -7,4 +7,7 @@
     <string name="action_settings">Настройки</string>
     <string name="done">Готово</string>
     <string name="error">Упс, Ошибка</string>
+    <string name="encryption_speed_chart">График скорости шифрования</string>
+    <string name="show_last_test">Посмотреть последний тест</string>
+    <string name="finish_test">Вы должны закончить тест</string>
 </resources>

@@ -6,4 +6,7 @@
     <string name="show_results">Show results</string>
     <string name="done">Done</string>
     <string name="error">Oops, Error</string>
+    <string name="encryption_speed_chart">Encryption speed chart</string>
+    <string name="show_last_test">Show last test</string>
+    <string name="finish_test">You need to finish test</string>
 </resources>

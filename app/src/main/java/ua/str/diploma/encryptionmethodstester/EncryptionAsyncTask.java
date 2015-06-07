@@ -1,10 +1,12 @@
 package ua.str.diploma.encryptionmethodstester;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.dd.processbutton.ProcessButton;
@@ -45,7 +47,8 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
 
     private static final String PASSWORD = "password";
     private static final String LOG_TAG = "LOG_TAG";
-    private static final String[] algorithms = {"AES"/*128,192,256*/, "DESede"/*192*/, "Blowfish"/*32-448*/, "RC4"/*0-2040*/};
+    private static final String[] algorithms = {"AES"/*128,192,256*/, "AES", "AES", "DESede"/*192*/, "Blowfish"/*32-448 (256)*/, "RC4"/*0-2040 (256)*/};
+    private static final int keys[] = {128, 192, 256, 192, 256, 256};
     //if need to show result of encryption/decryption use Base64. example:
     //Base64.decode(decryptedText, BASE64_FLAGS)
     private static final int BASE64_FLAGS = Base64.NO_WRAP;
@@ -53,13 +56,15 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
     private SecureRandom mRandom;
     private IvParameterSpec mIvParams;
     private SecretKey mKey;
+    private DbHelper dbHelper;
     private TextView tvProgressDescription;
     private Context context;
     private ProcessButton button;
     private byte[] fileBytes;
 
-    public EncryptionAsyncTask(Context context, ProcessButton button, TextView textView) {
+    public EncryptionAsyncTask(Context context, ProcessButton button, TextView textView, DbHelper dbHelper) {
         this.context = context;
+        this.dbHelper = dbHelper;
         this.button = button;
         this.tvProgressDescription = textView;
         mRandom = new SecureRandom();
@@ -113,20 +118,10 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
                 e.printStackTrace();
             }
         }
-
-        int keys[] = {128, 192, 256};
         for (int j = 0; j < algorithms.length; j++) {
             publishProgress(j);
             try {
-                if (j == 0) {
-                    for (int key : keys) {
-                        performCompleteProcess(algorithms[j], key);
-                    }
-                } else if (j == 1) {
-                    performCompleteProcess(algorithms[j], keys[1]);
-                } else {
-                    performCompleteProcess(algorithms[j], keys[2]);
-                }
+                performCompleteProcess(algorithms[j], keys[j]);
             } catch (Exception e) {
                 e.printStackTrace();
                 result = false;
@@ -138,7 +133,7 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
-        tvProgressDescription.setText(algorithms[values[0]]);
+        tvProgressDescription.setText(algorithms[values[0]] + " " + keys[values[0]]);
     }
 
     @Override
@@ -148,6 +143,12 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
             button.setProgress(100);
             button.setEnabled(true);
             tvProgressDescription.setText(R.string.done);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    context.startActivity(new Intent(context, EncryptionSpeedChartActivity.class));
+                }
+            });
         } else {
             button.setProgress(-1);
             tvProgressDescription.setText("");
@@ -157,15 +158,13 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
     private void performCompleteProcess(String alg, int kLength) throws UnsupportedEncodingException,
             NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException,
             BadPaddingException, InvalidAlgorithmParameterException, InvalidKeySpecException {
-
 //        Log.d(LOG_TAG, "Before: " + new String(fileBytes, "UTF-8"));
         byte[] encryptedText = encrypt(alg, kLength, fileBytes);
 //        Log.d(LOG_TAG, "Encrypted: " /*+ new String(encryptedText, "UTF-8") + ", or base64 encoded variant: "*/ + Base64.encodeToString(encryptedText, BASE64_FLAGS));
-        byte[] decryptedText = decrypt(alg, encryptedText);
+//        byte[] decryptedText = decrypt(alg, encryptedText);
 //        Log.d(LOG_TAG, "Decrypted: " + new String(decryptedText, "UTF-8") + "\n");
-
-        boolean resultOfCompare = Arrays.equals(fileBytes, decryptedText);
-        Log.d(LOG_TAG, "resultOfCompare: " + resultOfCompare);
+//        boolean resultOfCompare = Arrays.equals(fileBytes, decryptedText);
+//        Log.d(LOG_TAG, "resultOfCompare: " + resultOfCompare);
     }
 
     private byte[] encrypt(String algorithm, int keyLength, byte[] input) throws
@@ -183,14 +182,14 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
         mKey = new SecretKeySpec(keyBytes, algorithm);
 
         String algorithmWithMode = algorithm;
-        if (!algorithm.equals(algorithms[3])) {
+        if (!algorithm.equals(algorithms[5])) {
             algorithmWithMode = algorithm + "/CBC/PKCS5Padding";
         }
         Cipher cipher = Cipher.getInstance(algorithmWithMode);
         byte[] iv = new byte[cipher.getBlockSize()];
         mRandom.nextBytes(iv);
         mIvParams = new IvParameterSpec(iv);
-        if (!algorithm.equals(algorithms[3])) {
+        if (!algorithm.equals(algorithms[5])) {
             cipher.init(Cipher.ENCRYPT_MODE, mKey, mIvParams);
         } else {
             cipher.init(Cipher.ENCRYPT_MODE, mKey);
@@ -199,8 +198,10 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
         byte[] cipherText = cipher.doFinal(input);
         long endTime = System.currentTimeMillis();
         long diff = endTime - startTime;
-        Log.d(LOG_TAG, "algorithm: " + algorithm + ", keyLength= " + keyLength);
-        Log.d(LOG_TAG, "Encryption result:---------" + diff+ "---------");
+        Log.d(LOG_TAG, "algorithm: " + algorithm + ", key length= " + keyLength);
+        Log.d(LOG_TAG, "Encryption time: " + diff);
+        Result result = new Result(algorithm + "_" + keyLength, diff, fileBytes.length, System.currentTimeMillis());
+        dbHelper.addEncryptionResult(result);
         return cipherText;
     }
 
@@ -208,11 +209,11 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
             NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         String algorithmWithMode = algorithm;
-        if (!algorithm.equals(algorithms[3])) {
+        if (!algorithm.equals(algorithms[5])) {
             algorithmWithMode = algorithm + "/CBC/PKCS5Padding";
         }
         Cipher cipher = Cipher.getInstance(algorithmWithMode);
-        if (!algorithm.equals(algorithms[3])) {
+        if (!algorithm.equals(algorithms[5])) {
             cipher.init(Cipher.DECRYPT_MODE, mKey, mIvParams);
         } else {
             cipher.init(Cipher.DECRYPT_MODE, mKey);

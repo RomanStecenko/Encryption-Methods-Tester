@@ -9,9 +9,10 @@ import android.widget.TextView;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 
-public class MainActivityFragment extends Fragment {
+public class MainFragment extends Fragment {
     private ActionProcessButton mStartButton;
     private TextView tvProgressDescription;
+    private DbHelper db;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,14 +28,20 @@ public class MainActivityFragment extends Fragment {
         tvProgressDescription = (TextView) view.findViewById(R.id.tv_progress_description);
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        db = new DbHelper(getActivity());
+    }
+
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             EncryptionAsyncTask encryptionAsyncTask =
-                    new EncryptionAsyncTask(getActivity(), mStartButton, tvProgressDescription);
+                    new EncryptionAsyncTask(getActivity(), mStartButton, tvProgressDescription, db);
             switch (v.getId()) {
                 case R.id.start_button:
-                    encryptionAsyncTask.execute(EncryptionAsyncTask.MODE_VERY_SMALL);
+                    encryptionAsyncTask.execute(EncryptionAsyncTask.MODE_MIDDLE);
                     break;
             }
         }
