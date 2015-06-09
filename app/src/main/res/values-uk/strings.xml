@@ -10,4 +10,9 @@
     <string name="encryption_speed_chart">Графік швидкості шифрування</string>
     <string name="show_last_test">Подивись останній тест</string>
     <string name="finish_test">Ви повинні закінчити тест</string>
+    <string name="bit_test">Великий тест (~9 MB)</string>
+    <string name="middle_test">Середній тест (~6 MB)</string>
+    <string name="small_test">Невеликий тест (~3 MB)</string>
+    <string name="very_big_test">Дуже великий тест (~30 MB)</string>
+    <string name="very_small_test">Маленький тест  (~1 MB)</string>
 </resources>

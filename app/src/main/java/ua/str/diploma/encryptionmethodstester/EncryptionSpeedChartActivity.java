@@ -1,5 +1,6 @@
 package ua.str.diploma.encryptionmethodstester;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -9,6 +10,7 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ValueFormatter;
 
 import java.util.ArrayList;
 
@@ -57,19 +59,20 @@ public class EncryptionSpeedChartActivity extends AppCompatActivity {
         }
 
         BarDataSet dataSet = new BarDataSet(entries, "All 6 methods");
+        dataSet.setValueFormatter(new CpuRateFormatter());
         dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        dataSet.addColor(Color.rgb(64,224,208)); //Turquoise
         BarData barData = new BarData(xVals, dataSet);
         mChart.setData(barData);
         mChart.getLegend().setEnabled(false);
         mChart.invalidate();
         mChart.animateY(2000);
     }
-//        set.setValueFormatter(new CpuRateFormatter());
 
-//    public class CpuRateFormatter implements ValueFormatter {
-//        @Override
-//        public String getFormattedValue(float value) {
-//            return String.format("%d ms", (int)value);
-//        }
-//    }
+    public class CpuRateFormatter implements ValueFormatter {
+        @Override
+        public String getFormattedValue(float value) {
+            return String.format("%d ms", (int)value);
+        }
+    }
 }

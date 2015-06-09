@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -20,7 +19,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -51,7 +49,7 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
     private static final int keys[] = {128, 192, 256, 192, 256, 256};
     //if need to show result of encryption/decryption use Base64. example:
     //Base64.decode(decryptedText, BASE64_FLAGS)
-    private static final int BASE64_FLAGS = Base64.NO_WRAP;
+//    private static final int BASE64_FLAGS = Base64.NO_WRAP;
 
     private SecureRandom mRandom;
     private IvParameterSpec mIvParams;
@@ -73,7 +71,6 @@ public class EncryptionAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        button.setEnabled(false);
         button.setProgress(10);
         tvProgressDescription.setText("");
     }

@@ -9,4 +9,9 @@
     <string name="encryption_speed_chart">Encryption speed chart</string>
     <string name="show_last_test">Show last test</string>
     <string name="finish_test">You need to finish test</string>
+    <string name="very_small_test">Very small test (~1 MB)</string>
+    <string name="small_test">Small test (~3 MB)</string>
+    <string name="middle_test">Middle test (~6 MB)</string>
+    <string name="bit_test">Big test (~9 MB)</string>
+    <string name="very_big_test">Very big test (~30 MB)</string>
 </resources>
