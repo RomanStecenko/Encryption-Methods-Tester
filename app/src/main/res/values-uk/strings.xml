@@ -15,4 +15,5 @@
     <string name="small_test">Невеликий тест (~3 MB)</string>
     <string name="very_big_test">Дуже великий тест (~30 MB)</string>
     <string name="very_small_test">Маленький тест  (~1 MB)</string>
+    <string name="ms">мс</string>
 </resources>

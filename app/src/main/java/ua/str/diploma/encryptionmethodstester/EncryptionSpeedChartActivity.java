@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -33,6 +35,15 @@ public class EncryptionSpeedChartActivity extends AppCompatActivity {
         mChart.setScaleEnabled(true);
         mChart.setPinchZoom(false);
 
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        ValueFormatter valueFormatter = new CpuRateFormatter();
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setValueFormatter(valueFormatter);
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setValueFormatter(valueFormatter);
+
         dbHelper = new DbHelper(this);
     }
 
@@ -59,7 +70,6 @@ public class EncryptionSpeedChartActivity extends AppCompatActivity {
         }
 
         BarDataSet dataSet = new BarDataSet(entries, "All 6 methods");
-        dataSet.setValueFormatter(new CpuRateFormatter());
         dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         dataSet.addColor(Color.rgb(64,224,208)); //Turquoise
         BarData barData = new BarData(xVals, dataSet);
@@ -72,7 +82,7 @@ public class EncryptionSpeedChartActivity extends AppCompatActivity {
     public class CpuRateFormatter implements ValueFormatter {
         @Override
         public String getFormattedValue(float value) {
-            return String.format("%d ms", (int)value);
+            return String.format("%d " + getString(R.string.ms), Math.round(value));
         }
     }
 }
